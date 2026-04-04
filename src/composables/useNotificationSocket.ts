@@ -2,7 +2,7 @@ import { onUnmounted } from 'vue'
 import { useNotificationStore } from '@/stores/notifications'
 import type { Notification } from '@/types/notification'
 
-export function useNotificationSocket(userId: string | number) {
+export function useNotificationSocket(userId: string | number | null | undefined) {
   const store = useNotificationStore()
   let ws: WebSocket | null = null
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null
@@ -10,8 +10,9 @@ export function useNotificationSocket(userId: string | number) {
   let retries = 0
 
   function connect() {
+    if (userId == null || userId === '') return
     const protocol = location.protocol === 'https:' ? 'wss' : 'ws'
-    const url = `${protocol}://${location.hostname}:9001/ws/notifications?userId=${userId}`
+    const url = `${protocol}://${location.hostname}:9001/ws/notifications?userId=${encodeURIComponent(String(userId))}`
     ws = new WebSocket(url)
 
     ws.onmessage = (event) => {

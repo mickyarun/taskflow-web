@@ -7,7 +7,11 @@
           Mark all read
         </button>
         <template v-if="!showClearConfirm">
-          <button class="danger-action" @click="showClearConfirm = true">Clear all</button>
+          <button
+            class="danger-action"
+            @click="showClearConfirm = true"
+            :disabled="store.visibleItems.length === 0"
+          >Clear all</button>
         </template>
         <template v-else>
           <div class="confirm-row" role="group" aria-label="Confirm clear all notifications">

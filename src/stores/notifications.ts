@@ -68,7 +68,7 @@ export const useNotificationStore = defineStore('notifications', () => {
     const unread = items.value.filter(n => !n.isRead)
     unread.forEach(n => { n.isRead = true })
     try {
-      await api.patch('/notifications/read-all')
+      await api.post('/notifications/read-all')
     } catch {
       unread.forEach(n => { n.isRead = false })
       error.value = 'Failed to mark all as read.'
