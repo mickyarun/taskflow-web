@@ -118,8 +118,15 @@ export const useNotificationStore = defineStore('notifications', () => {
     items.value.unshift(notification)
   }
 
+  function setError(message: string) {
+    error.value = message
+  }
+
+  function clearError() {
+    error.value = ''
+  }
+
   return {
-    items,
     visibleItems,
     loading,
     error,
@@ -130,5 +137,7 @@ export const useNotificationStore = defineStore('notifications', () => {
     dismiss,
     dismissAll,
     addItem,
+    setError,
+    clearError,
   }
 })

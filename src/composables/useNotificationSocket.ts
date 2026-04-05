@@ -1,4 +1,4 @@
-import { onUnmounted } from 'vue'
+import { onUnmounted, toValue, type MaybeRefOrGetter } from 'vue'
 import { useNotificationStore } from '@/stores/notifications'
 import type { Notification } from '@/types/notification'
 
@@ -16,7 +16,9 @@ function buildWsBaseUrl(): string {
   return ''
 }
 
-export function useNotificationSocket(userId: string | number | null | undefined) {
+type UserIdInput = MaybeRefOrGetter<string | number | null | undefined>
+
+export function useNotificationSocket(userId: UserIdInput) {
   const store = useNotificationStore()
   let ws: WebSocket | null = null
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null
@@ -24,10 +26,11 @@ export function useNotificationSocket(userId: string | number | null | undefined
   let retries = 0
 
   function connect() {
-    if (userId == null || userId === '') return
+    const uid = toValue(userId)
+    if (uid == null || uid === '') return
     const baseUrl = buildWsBaseUrl()
     if (!baseUrl) return
-    const url = `${baseUrl}/ws/notifications?userId=${encodeURIComponent(String(userId))}`
+    const url = `${baseUrl}/ws/notifications?userId=${encodeURIComponent(String(uid))}`
     ws = new WebSocket(url)
 
     ws.onmessage = (event) => {
@@ -43,6 +46,11 @@ export function useNotificationSocket(userId: string | number | null | undefined
       retries = 0
     }
 
+    ws.onerror = () => {
+      // `onclose` fires next and owns the reconnect/backoff logic; we only
+      // need this handler so browsers don't log an "uncaught" warning.
+    }
+
     ws.onclose = () => {
       if (retries < MAX_RETRIES) {
         const delay = Math.min(1000 * 2 ** retries, 30000)
@@ -50,6 +58,8 @@ export function useNotificationSocket(userId: string | number | null | undefined
           retries++
           connect()
         }, delay)
+      } else {
+        store.setError('Real-time updates unavailable. Refresh to reconnect.')
       }
     }
   }
@@ -58,6 +68,7 @@ export function useNotificationSocket(userId: string | number | null | undefined
     if (reconnectTimer) clearTimeout(reconnectTimer)
     if (ws) {
       ws.onclose = null
+      ws.onerror = null
       ws.close()
       ws = null
     }

@@ -25,6 +25,15 @@
 
     <div class="notif-list" role="list">
       <div
+        v-if="store.loading && store.visibleItems.length === 0"
+        class="notif-loading"
+        role="status"
+        aria-live="polite"
+      >
+        Loading notifications…
+      </div>
+
+      <div
         v-for="n in store.visibleItems"
         :key="n.id"
         class="notif-item"
@@ -79,7 +88,9 @@ const showClearConfirm = ref(false)
 async function handleClear() {
   await store.dismissAll()
   showClearConfirm.value = false
-  emit('close')
+  // `dismissAll` swallows errors and sets `store.error`; keep the panel open
+  // on failure so the user can see that their notifications were restored.
+  if (!store.error) emit('close')
 }
 
 defineExpose({ resetConfirm: () => { showClearConfirm.value = false } })
@@ -199,6 +210,12 @@ defineExpose({ resetConfirm: () => { showClearConfirm.value = false } })
 .action-btn.dismiss { color: var(--color-text-muted, #6b7280); }
 .action-btn.dismiss:hover { background: #fef2f2; color: var(--color-danger, #ef4444); }
 
+.notif-loading {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-muted, #6b7280);
+}
 .empty-state { padding: 48px 16px; text-align: center; color: var(--color-text-muted, #6b7280); }
 .empty-icon { font-size: 28px; display: block; margin-bottom: 8px; color: var(--color-success, #10b981); }
 .empty-label { font-size: 14px; }
