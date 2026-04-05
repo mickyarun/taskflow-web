@@ -42,6 +42,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useNotificationStore } from '@/stores/notifications'
 import { useNotificationSocket } from '@/composables/useNotificationSocket'
+import { getCurrentUserId } from '@/services/auth'
 import NotificationPanel from './NotificationPanel.vue'
 
 const store = useNotificationStore()
@@ -85,21 +86,9 @@ onUnmounted(() => {
   if (errorTimer) clearTimeout(errorTimer)
 })
 
-// Wire real-time updates using the user ID decoded from the JWT access token
-function getUserIdFromToken(): string | null {
-  const token = localStorage.getItem('access_token')
-  if (!token) return null
-  try {
-    const payload = token.split('.')[1]
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
-    const claims = JSON.parse(atob(base64)) as { sub?: string | number }
-    return claims.sub != null ? String(claims.sub) : null
-  } catch {
-    return null
-  }
-}
-
-useNotificationSocket(getUserIdFromToken())
+// Wire real-time updates using the current user's ID from the auth service.
+// Composable no-ops when the user is unauthenticated.
+useNotificationSocket(getCurrentUserId())
 </script>
 
 <style scoped>

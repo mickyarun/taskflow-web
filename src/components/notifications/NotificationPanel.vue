@@ -38,7 +38,7 @@
           <div class="notif-body">{{ n.body }}</div>
           <time class="notif-time">{{ n.time }}</time>
         </div>
-        <div class="notif-actions" role="group" :aria-label="'Actions for: ' + n.title">
+        <div class="notif-actions" role="group" :aria-label="'Actions for notification: ' + n.title">
           <button
             v-if="!n.isRead"
             class="action-btn mark-read"
@@ -62,7 +62,7 @@
         aria-live="polite"
       >
         <span class="empty-icon" aria-hidden="true">✓</span>
-        <p class="empty-label">You're all caught up</p>
+        <p class="empty-label">No notifications</p>
       </div>
     </div>
   </div>

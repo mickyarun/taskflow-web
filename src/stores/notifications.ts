@@ -7,10 +7,10 @@ interface ApiNotification {
   id: number
   type: string
   title: string
-  body: string
-  time: string
+  body?: string
+  time?: string
   is_read: boolean
-  is_dismissed: boolean
+  is_dismissed?: boolean
 }
 
 function toNotification(raw: ApiNotification): Notification {
@@ -70,7 +70,11 @@ export const useNotificationStore = defineStore('notifications', () => {
     try {
       await api.post('/notifications/read-all')
     } catch {
-      unread.forEach(n => { n.isRead = false })
+      // Only roll back items that are still in the list and still marked read —
+      // avoids undoing a concurrent individual action on the same item.
+      unread.forEach(n => {
+        if (items.value.includes(n) && n.isRead) n.isRead = false
+      })
       error.value = 'Failed to mark all as read.'
     }
   }
@@ -83,7 +87,15 @@ export const useNotificationStore = defineStore('notifications', () => {
     try {
       await api.delete(`/notifications/${id}`)
     } catch {
-      items.value.splice(idx, 0, removed)
+      // Recompute insertion point — concurrent dismisses/adds may have shifted indices.
+      // List is newest-first (descending id via addItem unshift), so insert before the
+      // first item with a smaller id. Fallback to end if none found.
+      const restoreIdx = items.value.findIndex(n => n.id < removed.id)
+      items.value.splice(
+        restoreIdx === -1 ? items.value.length : restoreIdx,
+        0,
+        removed,
+      )
       error.value = 'Failed to dismiss notification.'
     }
   }
@@ -94,7 +106,10 @@ export const useNotificationStore = defineStore('notifications', () => {
     try {
       await api.delete('/notifications')
     } catch {
-      items.value = backup
+      // Preserve any real-time items that arrived via addItem() during the in-flight
+      // request — prepend them to the restored backup so nothing is silently dropped.
+      const liveItems = [...items.value]
+      items.value = [...liveItems, ...backup]
       error.value = 'Failed to clear notifications.'
     }
   }

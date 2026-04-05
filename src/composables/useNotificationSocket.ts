@@ -2,6 +2,20 @@ import { onUnmounted } from 'vue'
 import { useNotificationStore } from '@/stores/notifications'
 import type { Notification } from '@/types/notification'
 
+/**
+ * Resolve the WebSocket base URL from Vite env. Prefers `VITE_WS_URL` (full
+ * base, e.g. `wss://api.example.com`). Returns an empty string when no URL
+ * is configured so the composable can skip connecting instead of hitting a
+ * hardcoded localhost port.
+ */
+function buildWsBaseUrl(): string {
+  const explicit = import.meta.env.VITE_WS_URL
+  if (typeof explicit === 'string' && explicit.length > 0) {
+    return explicit.replace(/\/$/, '')
+  }
+  return ''
+}
+
 export function useNotificationSocket(userId: string | number | null | undefined) {
   const store = useNotificationStore()
   let ws: WebSocket | null = null
@@ -11,8 +25,9 @@ export function useNotificationSocket(userId: string | number | null | undefined
 
   function connect() {
     if (userId == null || userId === '') return
-    const protocol = location.protocol === 'https:' ? 'wss' : 'ws'
-    const url = `${protocol}://${location.hostname}:9001/ws/notifications?userId=${encodeURIComponent(String(userId))}`
+    const baseUrl = buildWsBaseUrl()
+    if (!baseUrl) return
+    const url = `${baseUrl}/ws/notifications?userId=${encodeURIComponent(String(userId))}`
     ws = new WebSocket(url)
 
     ws.onmessage = (event) => {
