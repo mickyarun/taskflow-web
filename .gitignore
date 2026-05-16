@@ -1,0 +1,5 @@
+.bodhiorchard/
+dist/
+node_modules/
+graphify-out/
+.claude/settings.local.json
