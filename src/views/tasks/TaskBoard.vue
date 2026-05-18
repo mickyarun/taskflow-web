@@ -58,4 +58,8 @@ async function bulkArchive(taskIds: number[]) {
   await api.post('/tasks/bulk-archive', { task_ids: taskIds })
   tasks.value = tasks.value.filter(t => !taskIds.includes(t.id))
 }
+
+async function bulkRestore(taskIds: number[]) {
+  await api.post('/tasks/bulk-restore', { task_ids: taskIds })
+}
 </script>
