@@ -1,6 +1,6 @@
 <template>
   <div class="notification-bell" @click="togglePanel">
-    <span class="icon" :class="{ pulse: unreadCount > 0 }">🔔</span>
+    <span class="icon">🔔</span>
     <span v-if="unreadCount > 0" class="badge">{{ unreadCount }}</span>
 
     <div v-if="showPanel" class="notification-panel">
@@ -47,14 +47,3 @@ async function markAllRead() {
   notifications.value.forEach(n => { n.is_read = true })
 }
 </script>
-
-<style scoped>
-.icon.pulse {
-  display: inline-block;
-  animation: bell-pulse 1.4s ease-in-out infinite;
-}
-@keyframes bell-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.18); }
-}
-</style>
