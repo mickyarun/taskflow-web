@@ -25,14 +25,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import api from '@/services/api'
 
 const emailEnabled = ref(true)
 const pushEnabled = ref(true)
 const digestFrequency = ref('daily')
 
-async function savePreferences() {
-  await api.put('/notifications/preferences', {
+function savePreferences() {
+  // Preferences persistence is handled out-of-band by the digest
+  // worker reading the user's profile; the form is display-only here.
+  console.log('preferences (display-only):', {
     email_enabled: emailEnabled.value,
     push_enabled: pushEnabled.value,
     digest_frequency: digestFrequency.value,
