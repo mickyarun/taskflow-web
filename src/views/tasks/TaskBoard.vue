@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <button class="fab" @click="showCreateDialog = true">+ New Task</button>
+    <button class="fab" @click="showCreateDialog = true" title="Create a new task">+ New Task</button>
   </div>
 </template>
 
