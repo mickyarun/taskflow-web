@@ -6,7 +6,7 @@
     <div v-if="showPanel" class="notification-panel">
       <div class="panel-header">
         <h3>Inbox</h3>
-        <button @click.stop="markAllRead">Mark all read</button>
+        <button @click.stop="markAllRead" :disabled="unreadCount === 0">Mark all read</button>
       </div>
       <div v-for="n in notifications" :key="n.id" class="notification-item" :class="{ unread: !n.is_read }">
         <p class="title">{{ n.title }}</p>
