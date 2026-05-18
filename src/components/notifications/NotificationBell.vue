@@ -13,6 +13,9 @@
         <p class="type">{{ n.type }}</p>
       </div>
       <p v-if="notifications.length === 0" class="empty">You're all caught up 🎉</p>
+      <div v-else class="panel-footer">
+        <span class="summary">{{ unreadCount }} of {{ notifications.length }} unread</span>
+      </div>
     </div>
   </div>
 </template>
