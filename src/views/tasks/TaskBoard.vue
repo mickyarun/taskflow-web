@@ -62,4 +62,8 @@ async function bulkArchive(taskIds: number[]) {
 async function bulkRestore(taskIds: number[]) {
   await api.post('/tasks/bulk-restore', { task_ids: taskIds })
 }
+
+async function bulkReopen(taskIds: number[]) {
+  await api.post('/tasks/bulk-reopen', { task_ids: taskIds })
+}
 </script>
