@@ -1,7 +1,7 @@
 <template>
   <div class="notification-bell" @click="togglePanel">
     <span class="icon">🔔</span>
-    <span v-if="unreadCount > 0" class="badge">{{ unreadCount }}</span>
+    <span v-if="unreadCount > 0" class="badge" :aria-label="`${unreadCount} unread notifications`">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
 
     <div v-if="showPanel" class="notification-panel">
       <div class="panel-header">
