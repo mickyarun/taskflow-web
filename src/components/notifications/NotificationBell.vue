@@ -12,7 +12,7 @@
         <p class="title">{{ n.title }}</p>
         <p class="type">{{ n.type }}</p>
       </div>
-      <p v-if="notifications.length === 0" class="empty">No notifications</p>
+      <p v-if="notifications.length === 0" class="empty">You're all caught up 🎉</p>
     </div>
   </div>
 </template>
