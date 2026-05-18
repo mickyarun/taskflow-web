@@ -53,4 +53,9 @@ onMounted(async () => {
 function openTask(id: number) {
   router.push(`/tasks/${id}`)
 }
+
+async function bulkArchive(taskIds: number[]) {
+  await api.post('/tasks/bulk-archive', { task_ids: taskIds })
+  tasks.value = tasks.value.filter(t => !taskIds.includes(t.id))
+}
 </script>
