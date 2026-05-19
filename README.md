@@ -30,3 +30,4 @@ Expects the API running at `http://localhost:9001` (configured in `src/services/
 
 - `NotificationBell` — Header bell icon with unread badge + dropdown panel
 - `NotificationPreferences` — Email/push/digest settings form
+<!-- diff-rescan-queue test 2026-05-19T05:02:46Z -->
