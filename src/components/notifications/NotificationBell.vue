@@ -8,26 +8,28 @@
       @click="togglePanel"
     >
       <svg
-        v-if="isFilled"
+        v-if="unreadCount > 0"
         width="24"
         height="24"
         viewBox="0 0 24 24"
+        fill="none"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path fill="currentColor" stroke="none" d="M12 2a7 7 0 0 0-7 7v4.586l-1.707 1.707A1 1 0 0 0 4 17h16a1 1 0 0 0 .707-1.707L19 13.586V9a7 7 0 0 0-7-7z"/>
-        <path fill="currentColor" stroke="none" d="M10 19a2 2 0 0 0 4 0h-4z"/>
+        <path fill="currentColor" d="M12 2C10.3431 2 9 3.34315 9 5V5.58579C6.71776 6.32958 5 8.47276 5 11V17L3 19V20H21V19L19 17V11C19 8.47276 17.2822 6.32958 15 5.58579V5C15 3.34315 13.6569 2 12 2Z"/>
+        <path fill="currentColor" d="M10 20C10 21.1046 10.8954 22 12 22C13.1046 22 14 21.1046 14 20H10Z"/>
       </svg>
       <svg
         v-else
         width="24"
         height="24"
         viewBox="0 0 24 24"
+        fill="none"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 2a7 7 0 0 0-7 7v4.586l-1.707 1.707A1 1 0 0 0 4 17h16a1 1 0 0 0 .707-1.707L19 13.586V9a7 7 0 0 0-7-7z"/>
-        <path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" d="M10 19a2 2 0 0 0 4 0"/>
+        <path stroke="currentColor" stroke-width="1.5" fill="none" d="M12 2C10.3431 2 9 3.34315 9 5V5.58579C6.71776 6.32958 5 8.47276 5 11V17L3 19V20H21V19L19 17V11C19 8.47276 17.2822 6.32958 15 5.58579V5C15 3.34315 13.6569 2 12 2Z"/>
+        <path stroke="currentColor" stroke-width="1.5" fill="none" d="M10 20C10 21.1046 10.8954 22 12 22C13.1046 22 14 21.1046 14 20H10Z"/>
       </svg>
 
       <span v-if="unreadCount > 0" class="badge" aria-hidden="true">
@@ -67,7 +69,6 @@ const notifications = ref<Notification[]>([])
 const showPanel = ref(false)
 
 const unreadCount = computed(() => notifications.value.filter(n => !n.is_read).length)
-const isFilled = computed(() => unreadCount.value > 0)
 
 onMounted(async () => {
   const { data } = await api.get('/notifications')
@@ -106,7 +107,7 @@ async function markAllRead() {
 
 .bell-button:focus-visible {
   outline: 2px solid var(--nav-link-active);
-  outline-offset: 2px;
+  outline-offset: 3px;
   border-radius: 4px;
 }
 
